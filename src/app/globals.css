@@ -1,0 +1,213 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bubblegum: #ff6b9d;
+  --color-bubblegum-light: #ff9ec4;
+  --color-sunshine: #ffd93d;
+  --color-sunshine-light: #ffe97a;
+  --color-mint: #6bcb77;
+  --color-sky: #4fc3f7;
+  --color-grape: #a855f7;
+  --color-grape-light: #c084fc;
+  --color-coral: #ff6f61;
+  --color-peach: #ffb8a0;
+  --color-cream: #fff8f0;
+  --color-retro-bg: #fef3e2;
+  --color-retro-dark: #2d1b69;
+
+  --font-display: "Fredoka", "Comic Sans MS", cursive, sans-serif;
+  --font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes bounce-gentle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes rainbow-border {
+  0% {
+    border-color: #ff6b9d;
+  }
+  25% {
+    border-color: #ffd93d;
+  }
+  50% {
+    border-color: #6bcb77;
+  }
+  75% {
+    border-color: #4fc3f7;
+  }
+  100% {
+    border-color: #ff6b9d;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+.animate-wiggle {
+  animation: wiggle 1s ease-in-out infinite;
+}
+.animate-pop-in {
+  animation: pop-in 0.5s ease-out forwards;
+}
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out forwards;
+}
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+.animate-bounce-gentle {
+  animation: bounce-gentle 2s ease-in-out infinite;
+}
+.animate-rainbow-border {
+  animation: rainbow-border 3s linear infinite;
+}
+
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+.stagger-4 {
+  animation-delay: 0.4s;
+}
+.stagger-5 {
+  animation-delay: 0.5s;
+}
+
+/* Fun scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #fef3e2;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#ff6b9d, #a855f7);
+  border-radius: 10px;
+}
+
+/* Retro halftone pattern */
+.halftone-bg {
+  background-image: radial-gradient(circle, #ff6b9d10 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Product card hover effect */
+.product-card {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.product-card:hover {
+  transform: translateY(-8px) rotate(1deg);
+  box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2),
+    0 0 0 3px rgba(255, 107, 157, 0.3);
+}
+
+/* Sale badge pulse */
+.sale-badge {
+  animation: bounce-gentle 1.5s ease-in-out infinite;
+}
+
+/* Rainbow text */
+.rainbow-text {
+  background: linear-gradient(
+    90deg,
+    #ff6b9d,
+    #ffd93d,
+    #6bcb77,
+    #4fc3f7,
+    #a855f7,
+    #ff6b9d
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-shift 3s linear infinite;
+}
+
+@keyframes rainbow-shift {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Button fun hover */
+.btn-fun {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+.btn-fun:hover {
+  transform: scale(1.05);
+}
+.btn-fun:active {
+  transform: scale(0.95);
+}
