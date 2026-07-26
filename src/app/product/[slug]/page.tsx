@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/AddToCartButton";
+import { ProductGallery } from "@/components/ProductGallery";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       price: products.price,
       comparePrice: products.comparePrice,
       image: products.image,
-      featured: products.featured,
+images: products.images,
+featured: products.featured,
       bestSeller: products.bestSeller,
       stockCount: products.stockCount,
       categoryName: categories.name,
@@ -98,30 +100,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {/* Product Detail */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Image */}
-          <div className="relative">
-            <div className="bg-white rounded-3xl overflow-hidden shadow-xl border-4 border-transparent hover:border-bubblegum transition-colors animate-rainbow-border">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-[400px] md:h-[500px] object-cover"
-              />
-            </div>
-
-            {/* Badges */}
-            <div className="absolute top-4 left-4 flex flex-col gap-2">
-              {product.bestSeller && (
-                <span className="bg-gradient-to-r from-sunshine to-coral text-retro-dark text-sm font-bold px-4 py-1.5 rounded-full shadow-lg">
-                  🔥 Best Seller
-                </span>
-              )}
-              {discount > 0 && (
-                <span className="sale-badge bg-gradient-to-r from-bubblegum to-grape text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-lg">
-                  💥 Save {discount}%!
-                </span>
-              )}
-            </div>
-          </div>
+          {/* Product Gallery */}
+<ProductGallery
+  images={
+    product.images.length > 0 ? product.images : [product.image]
+  }
+  name={product.name}
+  bestSeller={product.bestSeller}
+  discount={discount}
+/>
 
           {/* Details */}
           <div className="flex flex-col justify-center">

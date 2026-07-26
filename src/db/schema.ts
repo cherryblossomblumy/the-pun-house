@@ -7,6 +7,7 @@ import {
   numeric,
   timestamp,
   boolean,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 export const categories = pgTable("categories", {
@@ -27,7 +28,8 @@ export const products = pgTable("products", {
   price: numeric("price", { precision: 10, scale: 2 }).notNull(),
   comparePrice: numeric("compare_price", { precision: 10, scale: 2 }),
   image: varchar("image", { length: 500 }).notNull(),
-  categoryId: integer("category_id")
+images: jsonb("images").$type<string[]>().notNull().default([]),
+categoryId: integer("category_id")
     .references(() => categories.id)
     .notNull(),
   featured: boolean("featured").default(false).notNull(),
