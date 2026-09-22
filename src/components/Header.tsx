@@ -21,7 +21,7 @@ export function Header() {
               className="text-2xl md:text-3xl font-bold rainbow-text"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              PunStop
+              The Pun House
             </span>
           </Link>
 

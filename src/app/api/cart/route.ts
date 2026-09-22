@@ -38,6 +38,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
+  const [product] = await db
+  .select({ id: products.id })
+  .from(products)
+  .where(eq(products.id, Number(productId)))
+  .limit(1);
+
+if (!product) {
+  return NextResponse.json(
+    { error: "Product not found." },
+    { status: 404 }
+  );
+}
+
   // Check if item already in cart
   const existing = await db
     .select()
@@ -70,16 +83,21 @@ export async function POST(request: NextRequest) {
 // UPDATE quantity
 export async function PATCH(request: NextRequest) {
   const body = await request.json();
-  const { itemId, quantity } = body;
+  const { itemId, quantity, sessionId } = body;
 
-  if (!itemId || quantity < 1) {
+  if (!itemId || !sessionId || quantity < 1) {
     return NextResponse.json({ error: "Invalid" }, { status: 400 });
   }
 
   await db
     .update(cartItems)
     .set({ quantity })
-    .where(eq(cartItems.id, itemId));
+    .where(
+  and(
+    eq(cartItems.id, itemId),
+    eq(cartItems.sessionId, sessionId)
+  )
+);
 
   return NextResponse.json({ success: true });
 }
@@ -87,13 +105,18 @@ export async function PATCH(request: NextRequest) {
 // DELETE from cart
 export async function DELETE(request: NextRequest) {
   const body = await request.json();
-  const { itemId } = body;
+  const { itemId, sessionId } = body;
 
-  if (!itemId) {
+  if (!itemId || !sessionId) {
     return NextResponse.json({ error: "Missing itemId" }, { status: 400 });
   }
 
-  await db.delete(cartItems).where(eq(cartItems.id, itemId));
+  await db.delete(cartItems).where(
+  and(
+    eq(cartItems.id, itemId),
+    eq(cartItems.sessionId, sessionId)
+  )
+);
 
   return NextResponse.json({ success: true });
 }

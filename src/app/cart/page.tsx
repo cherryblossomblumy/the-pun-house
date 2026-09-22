@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useCart } from "@/components/CartProvider";
 import Link from "next/link";
 
@@ -12,6 +13,50 @@ export default function CartPage() {
     updateQuantity,
     isLoading,
   } = useCart();
+
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  const handleCheckout = async () => {
+    setCheckoutLoading(true);
+
+    try {
+      let sessionId = localStorage.getItem("pun_session");
+
+      if (!sessionId) {
+        sessionId =
+          "sess_" + Math.random().toString(36).substring(2) + Date.now();
+        localStorage.setItem("pun_session", sessionId);
+      }
+
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sessionId }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Could not start checkout.");
+      }
+
+      if (!data.url) {
+        throw new Error("Stripe checkout URL was not returned.");
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Could not start checkout."
+      );
+      setCheckoutLoading(false);
+    }
+  };
 
   const freeShippingThreshold = 35;
   const remaining = Math.max(0, freeShippingThreshold - totalPrice);
@@ -185,12 +230,14 @@ export default function CartPage() {
               </div>
             </div>
 
-            <button
-              className="btn-fun w-full mt-6 bg-gradient-to-r from-bubblegum to-grape text-white font-bold text-lg py-4 rounded-2xl shadow-xl"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              💳 Checkout
-            </button>
+<button
+  onClick={handleCheckout}
+  disabled={checkoutLoading}
+  className="btn-fun w-full mt-6 bg-gradient-to-r from-bubblegum to-grape text-white font-bold text-lg py-4 rounded-2xl shadow-xl disabled:opacity-60"
+  style={{ fontFamily: "var(--font-display)" }}
+>
+  {checkoutLoading ? "Loading checkout..." : "💳 Checkout"}
+</button>
 
             <p className="text-center text-xs text-gray-400 mt-3">
               🔒 Secure checkout • 100% Pun Satisfaction Guarantee

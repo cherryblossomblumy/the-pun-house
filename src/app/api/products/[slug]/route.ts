@@ -18,9 +18,10 @@ export async function GET(
       description: products.description,
       price: products.price,
       comparePrice: products.comparePrice,
-      image: products.image,
-      images: products.images,
-      categoryId: products.categoryId,
+image: products.image,
+images: products.images,
+categoryId: products.categoryId,
+
       featured: products.featured,
       bestSeller: products.bestSeller,
       stockCount: products.stockCount,

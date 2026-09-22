@@ -38,6 +38,40 @@ categoryId: integer("category_id")
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  sessionId: varchar("session_id", { length: 100 }).notNull(),
+  stripeCheckoutSessionId: varchar("stripe_checkout_session_id", {
+    length: 255,
+  })
+    .notNull()
+    .unique(),
+  stripePaymentIntentId: varchar("stripe_payment_intent_id", {
+    length: 255,
+  }),
+  status: varchar("status", { length: 50 }).notNull().default("pending"),
+  customerEmail: varchar("customer_email", { length: 255 }),
+  customerPhone: varchar("customer_phone", { length: 50 }),
+  subtotal: numeric("subtotal", { precision: 10, scale: 2 }).notNull(),
+  shipping: numeric("shipping", { precision: 10, scale: 2 }).notNull(),
+  total: numeric("total", { precision: 10, scale: 2 }).notNull(),
+  shippingAddress: jsonb("shipping_address"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const orderItems = pgTable("order_items", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id")
+    .references(() => orders.id)
+    .notNull(),
+  productId: integer("product_id")
+    .references(() => products.id)
+    .notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+  quantity: integer("quantity").notNull(),
+  image: varchar("image", { length: 500 }).notNull(),
+});
 export const cartItems = pgTable("cart_items", {
   id: serial("id").primaryKey(),
   sessionId: varchar("session_id", { length: 100 }).notNull(),

@@ -37,7 +37,7 @@ function getSessionId(): string {
   if (typeof window === "undefined") return "";
   let sid = localStorage.getItem("pun_session");
   if (!sid) {
-    sid = "sess_" + Math.random().toString(36).substring(2) + Date.now();
+    sid = "sess_" + crypto.randomUUID();
     localStorage.setItem("pun_session", sid);
   }
   return sid;
@@ -86,7 +86,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       await fetch("/api/cart", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId }),
+        body: JSON.stringify({
+  itemId,
+  sessionId: getSessionId(),
+}),
       });
       await fetchCart();
     } finally {
@@ -100,7 +103,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       await fetch("/api/cart", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId, quantity }),
+        body: JSON.stringify({
+  itemId,
+  quantity,
+  sessionId: getSessionId(),
+}),
       });
       await fetchCart();
     } finally {

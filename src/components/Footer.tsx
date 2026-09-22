@@ -25,7 +25,7 @@ export function Footer() {
               className="text-3xl font-bold rainbow-text"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              🤣 PunStop
+              🤣 The Pun House
             </span>
             <p className="mt-3 text-gray-300 text-sm">
               Life&apos;s too short for boring gifts. We make puns so good,
@@ -157,7 +157,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/10 mt-10 pt-6 text-center text-gray-400 text-sm">
-          <p>© 2026 PunStop. All puns reserved. 🤓</p>
+          <p>© 2026 The Pun House. All puns reserved. 🤓</p>
           <p className="mt-1">Made with 💖 and way too many dad jokes.</p>
         </div>
       </div>

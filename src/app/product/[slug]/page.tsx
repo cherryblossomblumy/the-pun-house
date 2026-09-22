@@ -163,7 +163,7 @@ featured: products.featured,
 
             {/* Description */}
             <div className="bg-cream rounded-2xl p-6 mb-6 border-2 border-sunshine/30">
-              <p className="text-gray-700 leading-relaxed">
+              <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                 {product.description}
               </p>
             </div>

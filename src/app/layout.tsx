@@ -6,7 +6,7 @@ import { Footer } from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 
 export const metadata: Metadata = {
-  title: "PunStop 🎉 — Puns So Good, They Hurt",
+  title: "The Pun House 🎉 — Puns So Good, They Hurt",
   description:
     "The punniest shop on the internet! Greeting cards, t-shirts, posters, mugs, and stickers that'll make you groan and grin.",
 };

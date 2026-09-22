@@ -102,7 +102,7 @@ export default async function HomePage() {
               style={{ fontFamily: "var(--font-display)" }}
             >
               Welcome to{" "}
-              <span className="rainbow-text drop-shadow-lg">PunStop!</span>
+              <span className="rainbow-text drop-shadow-lg">The Pun House!</span>
             </h1>
             <p className="text-xl md:text-2xl font-semibold mb-2 text-white/90 max-w-2xl mx-auto">
               Puns So Good, They Hurt 💫
