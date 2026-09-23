@@ -127,10 +127,10 @@ export async function POST(request: NextRequest) {
         const customerPhone =
   session.customer_details?.phone ?? null;
 
-const shippingAddress = session.customer_details?.address
+const shippingAddress = session.collected_information?.shipping_details
   ? {
-      name: session.customer_details.name ?? null,
-      address: session.customer_details.address,
+      name: session.collected_information.shipping_details.name ?? null,
+      address: session.collected_information.shipping_details.address,
     }
   : null;
 

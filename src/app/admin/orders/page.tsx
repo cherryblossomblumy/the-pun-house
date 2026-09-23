@@ -193,22 +193,23 @@ export default function OrdersPage() {
       </p>
 
       <p>
-        {String(order.shippingAddress.name ?? "")}
-        <br />
-        {String(order.shippingAddress.address?.line1 ?? "")}
-        {order.shippingAddress.address?.line2 && (
-          <>
-            <br />
-            {String(order.shippingAddress.address.line2)}
-          </>
-        )}
-        <br />
-        {String(order.shippingAddress.address?.city ?? "")},{" "}
-        {String(order.shippingAddress.address?.state ?? "")}{" "}
-        {String(order.shippingAddress.address?.postal_code ?? "")}
-        <br />
-        {String(order.shippingAddress.address?.country ?? "")}
-      </p>
+  <strong>Name:</strong>{" "}
+  {String(order.shippingAddress.name ?? "")}
+  <br />
+  {String(order.shippingAddress.address?.line1 ?? "")}
+  {order.shippingAddress.address?.line2 && (
+    <>
+      <br />
+      {String(order.shippingAddress.address.line2)}
+    </>
+  )}
+  <br />
+  {String(order.shippingAddress.address?.city ?? "")},{" "}
+  {String(order.shippingAddress.address?.state ?? "")}{" "}
+  {String(order.shippingAddress.address?.postal_code ?? "")}
+  <br />
+  {String(order.shippingAddress.address?.country ?? "")}
+</p>
     </div>
   )}
 </div>
