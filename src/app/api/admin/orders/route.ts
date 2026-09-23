@@ -35,3 +35,54 @@ export async function GET() {
 
   return NextResponse.json(ordersWithItems);
 }
+
+export async function PATCH(request: Request) {
+  const session = await auth();
+
+  if (!session?.user) {
+    return NextResponse.json(
+      { error: "Unauthorized." },
+      { status: 401 }
+    );
+  }
+
+  const body = await request.json();
+  const orderId = Number(body.orderId);
+  const status = body.status;
+
+  const allowedStatuses = [
+    "paid",
+    "in_production",
+    "shipped",
+    "delivered",
+    "cancelled",
+    "refunded",
+  ];
+
+  if (
+    !Number.isInteger(orderId) ||
+    orderId <= 0 ||
+    typeof status !== "string" ||
+    !allowedStatuses.includes(status)
+  ) {
+    return NextResponse.json(
+      { error: "Invalid order status." },
+      { status: 400 }
+    );
+  }
+
+  const [updatedOrder] = await db
+    .update(orders)
+    .set({ status })
+    .where(eq(orders.id, orderId))
+    .returning();
+
+  if (!updatedOrder) {
+    return NextResponse.json(
+      { error: "Order not found." },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json(updatedOrder);
+}

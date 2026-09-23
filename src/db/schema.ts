@@ -49,7 +49,7 @@ export const orders = pgTable("orders", {
   stripePaymentIntentId: varchar("stripe_payment_intent_id", {
     length: 255,
   }),
-  status: varchar("status", { length: 50 }).notNull().default("pending"),
+  status: varchar("status", { length: 50 }).notNull().default("paid"),
   customerEmail: varchar("customer_email", { length: 255 }),
   customerPhone: varchar("customer_phone", { length: 50 }),
   subtotal: numeric("subtotal", { precision: 10, scale: 2 }).notNull(),

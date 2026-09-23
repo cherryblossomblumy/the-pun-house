@@ -68,6 +68,44 @@ export default function OrdersPage() {
     loadOrders();
   }, []);
 
+    async function handleStatusChange(
+    orderId: number,
+    status: string
+  ) {
+    try {
+      const response = await fetch("/api/admin/orders", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+          status,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Could not update order status.");
+      }
+
+      const updatedOrder = await response.json();
+
+      setOrders((currentOrders) =>
+        currentOrders.map((order) =>
+          order.id === updatedOrder.id
+            ? { ...order, status: updatedOrder.status }
+            : order
+        )
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Could not update order status."
+      );
+    }
+  }
+
   return (
     <main className="min-h-screen bg-cream px-6 py-12">
       <div className="max-w-6xl mx-auto">
@@ -154,9 +192,19 @@ export default function OrdersPage() {
                   </div>
 
                   <div className="text-right">
-                    <span className="inline-block rounded-full bg-green-100 text-green-700 px-3 py-1 text-sm font-bold">
-                      {order.status}
-                    </span>
+                    <select
+  value={order.status}
+  onChange={(e) => handleStatusChange(order.id, e.target.value)}
+  onClick={(e) => e.stopPropagation()}
+  className="rounded-full border border-gray-200 bg-white px-3 py-1 text-sm font-bold text-retro-dark"
+>
+  <option value="paid">Paid</option>
+  <option value="in_production">In Production</option>
+  <option value="shipped">Shipped</option>
+  <option value="delivered">Delivered</option>
+  <option value="cancelled">Cancelled</option>
+  <option value="refunded">Refunded</option>
+</select>
 
                     <p className="text-2xl font-bold text-retro-dark mt-2">
                       ${order.total}
