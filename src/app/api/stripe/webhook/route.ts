@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { Resend } from "resend";
 import { db } from "@/db";
 import { cartItems, orderItems, orders, products } from "@/db/schema";
 import { eq, and, gte, sql } from "drizzle-orm";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const webhookSecretValue = process.env.STRIPE_WEBHOOK_SECRET;
+const resendApiKey = process.env.RESEND_API_KEY;
+const adminEmail = process.env.ADMIN_EMAIL;
 
 if (!stripeSecretKey) {
   throw new Error("STRIPE_SECRET_KEY is required");
@@ -15,9 +18,18 @@ if (!webhookSecretValue) {
   throw new Error("STRIPE_WEBHOOK_SECRET is required");
 }
 
+if (!resendApiKey) {
+  throw new Error("RESEND_API_KEY is required");
+}
+
+if (!adminEmail) {
+  throw new Error("ADMIN_EMAIL is required");
+}
+
 const webhookSecret = webhookSecretValue;
 
 const stripe = new Stripe(stripeSecretKey);
+const resend = new Resend(resendApiKey);
 
 export async function POST(request: NextRequest) {
   const signature = request.headers.get("stripe-signature");
@@ -124,15 +136,18 @@ export async function POST(request: NextRequest) {
       const customerEmail =
         session.customer_details?.email ?? null;
 
-        const customerPhone =
-  session.customer_details?.phone ?? null;
+      const customerPhone =
+        session.customer_details?.phone ?? null;
 
-const shippingAddress = session.collected_information?.shipping_details
-  ? {
-      name: session.collected_information.shipping_details.name ?? null,
-      address: session.collected_information.shipping_details.address,
-    }
-  : null;
+      const shippingAddress =
+        session.collected_information?.shipping_details
+          ? {
+              name:
+                session.collected_information.shipping_details.name ?? null,
+              address:
+                session.collected_information.shipping_details.address,
+            }
+          : null;
 
       const [order] = await tx
         .insert(orders)
@@ -185,6 +200,15 @@ const shippingAddress = session.collected_information?.shipping_details
       return {
         alreadyProcessed: false,
         orderId: order.id,
+        customerEmail,
+        subtotal: subtotal.toFixed(2),
+        shipping: shipping.toFixed(2),
+        total: total.toFixed(2),
+        items: items.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
       };
     });
 
@@ -193,6 +217,57 @@ const shippingAddress = session.collected_information?.shipping_details
         ? `Stripe order already processed: ${session.id}`
         : `Stripe order created: ${result.orderId}`
     );
+
+    if (!result.alreadyProcessed) {
+      const itemsHtml = (result.items ?? [])
+  .map(
+    (item: {
+      name: string;
+      quantity: number;
+      price: string;
+    }) =>
+      `<li>${item.name} × ${item.quantity} — $${(
+        Number(item.price) * item.quantity
+      ).toFixed(2)}</li>`
+  )
+  .join("");
+
+      const { error: emailError } = await resend.emails.send({
+        from: "The Pun House <orders@thepunhouse.com>",
+        to: [adminEmail!],
+        subject: `New Pun House Order #${result.orderId}`,
+        html: `
+          <h2>🎉 New Pun House Order #${result.orderId}</h2>
+
+          <p>A new order has been paid and is ready for fulfillment.</p>
+
+          <h3>Order</h3>
+          <ul>
+            ${itemsHtml}
+          </ul>
+
+          <p><strong>Subtotal:</strong> $${result.subtotal}</p>
+          <p><strong>Shipping:</strong> $${result.shipping}</p>
+          <p><strong>Total:</strong> $${result.total}</p>
+
+          <p><strong>Customer email:</strong> ${
+            result.customerEmail ?? "Not provided"
+          }</p>
+
+          <p>
+            Log in to The Pun House admin to view the complete order and
+            begin fulfillment.
+          </p>
+        `,
+      });
+
+      if (emailError) {
+        console.error(
+          "New order email failed to send:",
+          emailError
+        );
+      }
+    }
 
     return NextResponse.json({ received: true });
   } catch (error) {
