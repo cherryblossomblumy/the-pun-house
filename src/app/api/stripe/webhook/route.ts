@@ -198,19 +198,23 @@ export async function POST(request: NextRequest) {
         .where(eq(cartItems.sessionId, sessionId));
 
       return {
-        alreadyProcessed: false,
-        orderId: order.id,
-        customerEmail,
-        subtotal: subtotal.toFixed(2),
-        shipping: shipping.toFixed(2),
-        total: total.toFixed(2),
-        items: items.map((item) => ({
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-      };
-    });
+  alreadyProcessed: false,
+  orderId: order.id,
+  customerEmail,
+  customerName: shippingAddress?.name ?? null,
+  customerPhone,
+  shippingAddress: shippingAddress?.address ?? null,
+  subtotal: subtotal.toFixed(2),
+  shipping: shipping.toFixed(2),
+  total: total.toFixed(2),
+  items: items.map((item) => ({
+    name: item.name,
+    quantity: item.quantity,
+    price: item.price,
+  })),
+};
+
+});
 
     console.log(
       result.alreadyProcessed
@@ -237,28 +241,64 @@ export async function POST(request: NextRequest) {
         to: [adminEmail!],
         subject: `New Pun House Order #${result.orderId}`,
         html: `
-          <h2>🎉 New Pun House Order #${result.orderId}</h2>
+  <h2>🎉 New Pun House Order #${result.orderId}</h2>
 
-          <p>A new order has been paid and is ready for fulfillment.</p>
+  <p><strong>Status:</strong> Paid — Ready for fulfillment</p>
 
-          <h3>Order</h3>
-          <ul>
-            ${itemsHtml}
-          </ul>
+  <p>${new Date().toLocaleString("en-US", {
+    dateStyle: "long",
+    timeStyle: "short",
+    timeZone: "America/New_York",
+  })}</p>
 
-          <p><strong>Subtotal:</strong> $${result.subtotal}</p>
-          <p><strong>Shipping:</strong> $${result.shipping}</p>
-          <p><strong>Total:</strong> $${result.total}</p>
+  <hr />
 
-          <p><strong>Customer email:</strong> ${
-            result.customerEmail ?? "Not provided"
-          }</p>
+  <h3>Customer</h3>
+  <p>
+    <strong>Name:</strong> ${result.customerName ?? "Not provided"}<br />
+    <strong>Email:</strong> ${
+      result.customerEmail ?? "Not provided"
+    }<br />
+    <strong>Phone:</strong> ${
+      result.customerPhone ?? "Not provided"
+    }
+  </p>
 
-          <p>
-            Log in to The Pun House admin to view the complete order and
-            begin fulfillment.
-          </p>
-        `,
+  <h3>Ship To</h3>
+  <p>
+    ${result.customerName ?? "Not provided"}<br />
+    ${result.shippingAddress?.line1 ?? ""}<br />
+    ${
+      result.shippingAddress?.line2
+        ? `${result.shippingAddress.line2}<br />`
+        : ""
+    }
+    ${result.shippingAddress?.city ?? ""}, ${
+      result.shippingAddress?.state ?? ""
+    } ${result.shippingAddress?.postal_code ?? ""}<br />
+    ${result.shippingAddress?.country ?? ""}
+  </p>
+
+  <h3>Items</h3>
+  <ul>
+    ${itemsHtml}
+  </ul>
+
+  <p><strong>Subtotal:</strong> $${result.subtotal}</p>
+  <p><strong>Shipping:</strong> $${result.shipping}</p>
+  <p><strong>Total:</strong> $${result.total}</p>
+
+  <hr />
+
+  <p>
+    <strong>Next step:</strong> Place this order with Gooten,
+    then mark the order <strong>In Production</strong> in Admin.
+  </p>
+
+  <p>
+    Log in to The Pun House admin to view the complete order.
+  </p>
+`,
       });
 
       if (emailError) {
