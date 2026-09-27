@@ -12,7 +12,54 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export async function generateMetadata({
+  params,
+}: ProductPageProps) {
+  const { slug } = await params;
+
+  const results = await db
+    .select({
+      name: products.name,
+      description: products.description,
+      image: products.image,
+    })
+    .from(products)
+    .where(eq(products.slug, slug))
+    .limit(1);
+
+  if (results.length === 0) {
+    return {
+      title: "Product Not Found | The Pun House",
+    };
+  }
+
+  const product = results[0];
+
+  return {
+    title: `${product.name} | The Pun House`,
+    description: product.description.slice(0, 160),
+    alternates: {
+      canonical: `https://thepunhouse.com/product/${slug}`,
+    },
+    openGraph: {
+      title: `${product.name} | The Pun House`,
+      description: product.description.slice(0, 160),
+      url: `https://thepunhouse.com/product/${slug}`,
+      siteName: "The Pun House",
+      type: "website",
+      images: [
+        {
+          url: product.image,
+          alt: product.name,
+        },
+      ],
+    },
+  };
+}
+
+export default async function ProductPage({
+  params,
+}: ProductPageProps) {
   const { slug } = await params;
 
   const results = await db
@@ -25,8 +72,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
       price: products.price,
       comparePrice: products.comparePrice,
       image: products.image,
-images: products.images,
-featured: products.featured,
+      images: products.images,
+      featured: products.featured,
       bestSeller: products.bestSeller,
       stockCount: products.stockCount,
       categoryName: categories.name,
@@ -46,11 +93,44 @@ featured: products.featured,
 
   const discount = product.comparePrice
     ? Math.round(
-        ((parseFloat(product.comparePrice) - parseFloat(product.price)) /
+        ((parseFloat(product.comparePrice) -
+          parseFloat(product.price)) /
           parseFloat(product.comparePrice)) *
           100
       )
     : 0;
+
+  const productImages =
+    product.images.length > 0
+      ? product.images
+      : [product.image];
+
+  const productUrl = `https://thepunhouse.com/product/${product.slug}`;
+
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: productImages,
+    sku: String(product.id),
+    brand: {
+      "@type": "Brand",
+      name: "The Pun House",
+    },
+    category: product.categoryName,
+    offers: {
+      "@type": "Offer",
+      url: productUrl,
+      priceCurrency: "USD",
+      price: parseFloat(product.price).toFixed(2),
+      availability:
+        product.stockCount > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
 
   // Get related products from same category
   const related = await db
@@ -71,10 +151,19 @@ featured: products.featured,
     .where(eq(categories.slug, product.categorySlug))
     .limit(4);
 
-  const relatedProducts = related.filter((p) => p.id !== product.id);
+  const relatedProducts = related.filter(
+    (p) => p.id !== product.id
+  );
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productSchema),
+        }}
+      />
+
       {/* Breadcrumbs */}
       <div className="max-w-7xl mx-auto px-4 py-4">
         <nav className="flex items-center gap-2 text-sm text-gray-500">
@@ -93,7 +182,9 @@ featured: products.featured,
             {product.categoryEmoji} {product.categoryName}
           </Link>
           <span>›</span>
-          <span className="text-retro-dark font-semibold">{product.name}</span>
+          <span className="text-retro-dark font-semibold">
+            {product.name}
+          </span>
         </nav>
       </div>
 
@@ -101,14 +192,12 @@ featured: products.featured,
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Product Gallery */}
-<ProductGallery
-  images={
-    product.images.length > 0 ? product.images : [product.image]
-  }
-  name={product.name}
-  bestSeller={product.bestSeller}
-  discount={discount}
-/>
+          <ProductGallery
+            images={productImages}
+            name={product.name}
+            bestSeller={product.bestSeller}
+            discount={discount}
+          />
 
           {/* Details */}
           <div className="flex flex-col justify-center">
@@ -128,13 +217,9 @@ featured: products.featured,
               {product.name}
             </h1>
 
-            <p className="text-lg text-gray-500 mb-4">{product.tagline}</p>
-
-            {/* Rating */}
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-sunshine text-xl">⭐⭐⭐⭐⭐</span>
-              <span className="text-gray-500 text-sm">(127 reviews)</span>
-            </div>
+            <p className="text-lg text-gray-500 mb-4">
+              {product.tagline}
+            </p>
 
             {/* Price */}
             <div className="flex items-center gap-3 mb-6">
@@ -144,11 +229,14 @@ featured: products.featured,
               >
                 ${parseFloat(product.price).toFixed(2)}
               </span>
+
               {product.comparePrice && (
                 <>
                   <span className="text-xl text-gray-400 line-through">
-                    ${parseFloat(product.comparePrice).toFixed(2)}
+                    $
+                    {parseFloat(product.comparePrice).toFixed(2)}
                   </span>
+
                   <span className="bg-bubblegum/10 text-bubblegum font-bold text-sm px-3 py-1 rounded-full">
                     You save $
                     {(
@@ -169,17 +257,28 @@ featured: products.featured,
             </div>
 
             {/* Stock */}
-            <div className="flex items-center gap-2 mb-6">
-              <span className="w-3 h-3 bg-mint rounded-full animate-pulse" />
-              <span className="text-mint font-semibold text-sm">
-                In Stock — {product.stockCount} left!
-              </span>
-              {product.stockCount < 20 && (
-                <span className="text-coral font-bold text-sm ml-2 animate-bounce-gentle">
-                  🔥 Selling fast!
+            {product.stockCount > 0 ? (
+              <div className="flex items-center gap-2 mb-6">
+                <span className="w-3 h-3 bg-mint rounded-full animate-pulse" />
+
+                <span className="text-mint font-semibold text-sm">
+                  In Stock
                 </span>
-              )}
-            </div>
+
+                {product.stockCount < 20 && (
+                  <span className="text-coral font-bold text-sm ml-2 animate-bounce-gentle">
+                    🔥 Selling fast!
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 mb-6">
+                <span className="w-3 h-3 bg-gray-400 rounded-full" />
+                <span className="text-gray-500 font-semibold text-sm">
+                  Currently out of stock
+                </span>
+              </div>
+            )}
 
             {/* Add to Cart */}
             <AddToCartButton productId={product.id} />
@@ -188,7 +287,7 @@ featured: products.featured,
             <div className="grid grid-cols-2 gap-3 mt-6">
               {[
                 { emoji: "🚚", text: "Free shipping $35+" },
-                { emoji: "🔄", text: "30-day returns" },
+                { emoji: "📦", text: "Made to order" },
                 { emoji: "💚", text: "Eco-friendly" },
                 { emoji: "🎁", text: "Gift-ready" },
               ].map((perk, i) => (
@@ -214,6 +313,7 @@ featured: products.featured,
           >
             You Might Also Like 💝
           </h2>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProducts.map((p) => (
               <div
@@ -226,6 +326,7 @@ featured: products.featured,
                     alt={p.name}
                     className="w-full h-48 object-cover"
                   />
+
                   <div className="p-4">
                     <h3
                       className="font-bold text-retro-dark"
@@ -233,7 +334,11 @@ featured: products.featured,
                     >
                       {p.name}
                     </h3>
-                    <p className="text-sm text-gray-500">{p.tagline}</p>
+
+                    <p className="text-sm text-gray-500">
+                      {p.tagline}
+                    </p>
+
                     <span className="text-grape font-bold text-lg mt-2 block">
                       ${parseFloat(p.price).toFixed(2)}
                     </span>
