@@ -11,10 +11,9 @@ export const metadata = {
 
 export default function ShippingPage() {
   return (
-    <main className="max-w-4xl mx-auto px-4 py-12 md:py-16">
-      <div className="text-center mb-12">
-        <div className="text-5xl mb-4">📦</div>
-
+    <main className="max-w-5xl mx-auto px-4 py-12 md:py-16">
+      {/* Hero */}
+      <div className="text-center mb-12 md:mb-14">
         <h1
           className="text-4xl md:text-5xl font-bold text-retro-dark mb-4"
           style={{ fontFamily: "var(--font-display)" }}
@@ -22,96 +21,106 @@ export default function ShippingPage() {
           Shipping
         </h1>
 
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Here&apos;s what to expect from the time you place your order
-          to the moment it arrives.
+        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+          Good things are on the way! Here&apos;s what to expect from the
+          time you place your order to the moment it arrives.
         </p>
       </div>
 
-      <div className="space-y-8">
-        <section className="bg-cream rounded-3xl p-6 md:p-8 border-2 border-sunshine/30">
+      {/* Shipping steps */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+        <div className="bg-cream rounded-3xl p-6 md:p-7 border-2 border-grape/10">
+          <div className="text-sm font-bold text-grape mb-4">01</div>
+
           <h2
-            className="text-2xl font-bold text-retro-dark mb-3"
+            className="text-xl md:text-2xl font-bold text-retro-dark mb-3"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Production time
+            We Make It
           </h2>
 
           <p className="text-gray-700 leading-relaxed">
-            Our products are made to order. Production takes{" "}
-            <strong>2–4 business days</strong> before your order ships.
+            Your order is made to order, because we don&apos;t believe in
+            one-size-fits-all fun. Production takes{" "}
+            <strong>2–4 business days</strong>.
           </p>
-        </section>
+        </div>
 
-        <section>
+        <div className="bg-cream rounded-3xl p-6 md:p-7 border-2 border-grape/10">
+          <div className="text-sm font-bold text-grape mb-4">02</div>
+
           <h2
-            className="text-2xl font-bold text-retro-dark mb-3"
+            className="text-xl md:text-2xl font-bold text-retro-dark mb-3"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Delivery
+            We Ship It
           </h2>
 
           <p className="text-gray-700 leading-relaxed">
-            We currently ship within the United States. After production,
-            standard U.S. delivery typically takes a few additional
-            business days.
+            Once your order is ready, it heads your way! We currently ship
+            within the U.S., and you&apos;ll receive tracking information by
+            email when your order ships.
           </p>
-        </section>
+        </div>
 
-        <section>
+        <div className="bg-cream rounded-3xl p-6 md:p-7 border-2 border-grape/10">
+          <div className="text-sm font-bold text-grape mb-4">03</div>
+
           <h2
-            className="text-2xl font-bold text-retro-dark mb-3"
+            className="text-xl md:text-2xl font-bold text-retro-dark mb-3"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Tracking
+            You Get It
           </h2>
 
           <p className="text-gray-700 leading-relaxed">
-            You&apos;ll receive tracking information by email once your
-            order ships.
+            Standard U.S. delivery typically takes a few additional
+            business days after production. Then the fun begins!
           </p>
-        </section>
+        </div>
+      </section>
 
-        <section>
-          <h2
-            className="text-2xl font-bold text-retro-dark mb-3"
-            style={{ fontFamily: "var(--font-display)" }}
+      {/* Good to know */}
+      <section className="bg-white rounded-3xl p-6 md:p-8 border-2 border-sunshine/30 mb-12">
+        <h2
+          className="text-xl md:text-2xl font-bold text-retro-dark mb-3"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          Good To Know
+        </h2>
+
+        <p className="text-gray-700 leading-relaxed">
+          Holidays, high order volume, and carrier delays can occasionally
+          add some extra time. We&apos;ll always send tracking once your
+          order is on its way.
+        </p>
+      </section>
+
+      {/* Contact */}
+      <section className="text-center border-t border-grape/10 pt-10">
+        <h2
+          className="text-2xl md:text-3xl font-bold text-retro-dark mb-3"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          Need Help With An Order?
+        </h2>
+
+        <p className="text-gray-600">
+          We&apos;re happy to help!{" "}
+          <a
+            href="mailto:ruby@thepunhouse.com"
+            className="font-semibold text-grape hover:underline"
           >
-            A quick heads-up
-          </h2>
+            ruby@thepunhouse.com
+          </a>
+        </p>
+      </section>
 
-          <p className="text-gray-700 leading-relaxed">
-            Production and delivery can occasionally take longer during
-            holidays or periods of high order volume. Carrier delays can
-            also affect delivery times after an order has shipped.
-          </p>
-        </section>
-
-        <section className="bg-white rounded-3xl p-6 md:p-8 border-2 border-grape/10">
-          <h2
-            className="text-2xl font-bold text-retro-dark mb-3"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Questions about your order?
-          </h2>
-
-          <p className="text-gray-700 leading-relaxed">
-            We&apos;re happy to help. Email us at{" "}
-            <a
-              href="mailto:ruby@thepunhouse.com"
-              className="font-semibold text-grape hover:underline"
-            >
-              ruby@thepunhouse.com
-            </a>
-            .
-          </p>
-        </section>
-      </div>
-
-      <div className="text-center mt-12">
+      {/* CTA */}
+      <div className="text-center mt-10">
         <Link
           href="/shop"
-          className="inline-flex items-center justify-center rounded-full bg-grape px-6 py-3 font-bold text-white hover:opacity-90 transition-opacity"
+          className="inline-flex items-center justify-center rounded-full bg-grape px-7 py-3 font-bold text-white hover:opacity-90 transition-opacity"
         >
           Shop The Pun House
         </Link>
