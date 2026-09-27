@@ -22,7 +22,7 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-2">
-  <span className="text-3xl inline-block">
+  <span className="text-3xl animate-wiggle inline-block">
     🤣
   </span>
   <span
