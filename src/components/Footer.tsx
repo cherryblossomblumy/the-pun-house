@@ -21,12 +21,17 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-1">
-            <span
-              className="text-3xl font-bold rainbow-text"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              🤣 The Pun House
-            </span>
+            <div className="flex items-center gap-2">
+  <span className="text-3xl inline-block">
+    🤣
+  </span>
+  <span
+    className="text-3xl font-bold rainbow-text"
+    style={{ fontFamily: "var(--font-display)" }}
+  >
+    The Pun House
+  </span>
+</div>
             <p className="mt-3 text-gray-300 text-sm">
               Life&apos;s too short for boring gifts. We make puns so good,
               they&apos;ll make you groan AND grin.

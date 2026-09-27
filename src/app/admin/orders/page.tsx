@@ -381,19 +381,19 @@ export default function OrdersPage() {
 
   {order.status === "paid" && (
     <option value="in_production">
-      Move to In Production
+      In Production
     </option>
   )}
 
   {order.status === "in_production" && (
     <option value="shipped">
-      Mark as Shipped
+      Shipped
     </option>
   )}
 
   {order.status === "shipped" && (
     <option value="delivered">
-      Mark as Delivered
+      Delivered
     </option>
   )}
 
@@ -623,9 +623,6 @@ export default function OrdersPage() {
         <h3 className="font-bold text-retro-dark mb-2">
           Customer
         </h3>
-                        <h3 className="font-bold text-retro-dark mb-2">
-                          Customer
-                        </h3>
 
                         {order.customerEmail && (
                           <p className="text-sm text-gray-600">
