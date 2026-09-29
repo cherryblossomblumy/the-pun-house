@@ -114,11 +114,15 @@ export function Footer() {
             </h3>
             <ul className="space-y-2 text-gray-300">
               <li>
-                <span className="hover:text-bubblegum transition-colors cursor-pointer">
-                  📦 Shipping Info
-                </span>
-              </li>
-              <li>
+  <Link
+    href="/shipping"
+    className="hover:text-bubblegum transition-colors"
+  >
+    📦 Shipping Info
+  </Link>
+</li>
+
+<li>
   <Link
     href="/returns"
     className="hover:text-bubblegum transition-colors"
@@ -126,16 +130,42 @@ export function Footer() {
     🔄 Returns & Exchanges
   </Link>
 </li>
-              <li>
-                <span className="hover:text-bubblegum transition-colors cursor-pointer">
-                  ❓ FAQ
-                </span>
-              </li>
-              <li>
-                <span className="hover:text-bubblegum transition-colors cursor-pointer">
-                  📧 Contact Us
-                </span>
-              </li>
+
+<li>
+  <Link
+    href="/faq"
+    className="hover:text-bubblegum transition-colors"
+  >
+    ❓ FAQ
+  </Link>
+</li>
+
+<li>
+  <Link
+    href="/contact"
+    className="hover:text-bubblegum transition-colors"
+  >
+    📧 Contact Us
+  </Link>
+</li>
+
+<li>
+  <Link
+    href="/privacy"
+    className="hover:text-bubblegum transition-colors"
+  >
+    🔒 Privacy Policy
+  </Link>
+</li>
+
+<li>
+  <Link
+    href="/terms"
+    className="hover:text-bubblegum transition-colors"
+  >
+    📜 Terms of Service
+  </Link>
+</li>
             </ul>
           </div>
 
