@@ -119,10 +119,13 @@ export function Footer() {
                 </span>
               </li>
               <li>
-                <span className="hover:text-bubblegum transition-colors cursor-pointer">
-                  🔄 Returns & Exchanges
-                </span>
-              </li>
+  <Link
+    href="/returns"
+    className="hover:text-bubblegum transition-colors"
+  >
+    🔄 Returns & Exchanges
+  </Link>
+</li>
               <li>
                 <span className="hover:text-bubblegum transition-colors cursor-pointer">
                   ❓ FAQ

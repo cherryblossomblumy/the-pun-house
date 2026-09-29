@@ -4,6 +4,8 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
+import { Analytics } from "@/components/Analytics";
+import { CookieConsent } from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   title: "The Pun House 🎉 — Puns So Good, They Hurt",
@@ -35,6 +37,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <main className="flex-1">{children}</main>
           <Footer />
         </CartProvider>
+<Analytics />
+<CookieConsent />
+        
       </body>
     </html>
   );
