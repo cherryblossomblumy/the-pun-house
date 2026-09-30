@@ -5,10 +5,11 @@ import { eq } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+
   const category = searchParams.get("category");
   const featured = searchParams.get("featured");
 
-  let query = db
+  const results = await db
     .select({
       id: products.id,
       name: products.name,
@@ -26,14 +27,15 @@ export async function GET(request: NextRequest) {
       categoryEmoji: categories.emoji,
     })
     .from(products)
-    .innerJoin(categories, eq(products.categoryId, categories.id));
-
-  const results = await query;
+    .innerJoin(categories, eq(products.categoryId, categories.id))
+    .where(eq(products.published, true));
 
   let filtered = results;
+
   if (category) {
     filtered = filtered.filter((p) => p.categorySlug === category);
   }
+
   if (featured === "true") {
     filtered = filtered.filter((p) => p.featured);
   }

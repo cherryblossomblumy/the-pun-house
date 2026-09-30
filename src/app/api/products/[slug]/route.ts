@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { products, categories } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function GET(
   _request: NextRequest,
@@ -18,10 +18,9 @@ export async function GET(
       description: products.description,
       price: products.price,
       comparePrice: products.comparePrice,
-image: products.image,
-images: products.images,
-categoryId: products.categoryId,
-
+      image: products.image,
+      images: products.images,
+      categoryId: products.categoryId,
       featured: products.featured,
       bestSeller: products.bestSeller,
       stockCount: products.stockCount,
@@ -31,11 +30,19 @@ categoryId: products.categoryId,
     })
     .from(products)
     .innerJoin(categories, eq(products.categoryId, categories.id))
-    .where(eq(products.slug, slug))
+    .where(
+      and(
+        eq(products.slug, slug),
+        eq(products.published, true)
+      )
+    )
     .limit(1);
 
   if (results.length === 0) {
-    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "Product not found" },
+      { status: 404 }
+    );
   }
 
   return NextResponse.json({ product: results[0] });

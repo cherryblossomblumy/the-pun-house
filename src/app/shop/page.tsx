@@ -31,7 +31,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
       categoryEmoji: categories.emoji,
     })
     .from(products)
-    .innerJoin(categories, eq(products.categoryId, categories.id));
+    .innerJoin(categories, eq(products.categoryId, categories.id))
+    .where(eq(products.published, true));
 
   const filteredProducts = categorySlug
     ? allProducts.filter((p) => p.categorySlug === categorySlug)
@@ -53,6 +54,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
             🎁
           </div>
         </div>
+
         <div className="relative max-w-4xl mx-auto px-4">
           <h1
             className="text-4xl md:text-5xl font-bold mb-3"
@@ -62,6 +64,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
               ? `${currentCategory.emoji} ${currentCategory.name}`
               : "🛍️ Shop All Puns"}
           </h1>
+
           <p className="text-lg text-white/80">
             {currentCategory
               ? currentCategory.description
@@ -83,6 +86,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           >
             🌟 All
           </Link>
+
           {allCategories.map((cat) => (
             <Link
               key={cat.id}
@@ -129,12 +133,14 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         ) : (
           <div className="text-center py-20">
             <span className="text-6xl block mb-4">😢</span>
+
             <h3
               className="text-2xl font-bold text-retro-dark"
               style={{ fontFamily: "var(--font-display)" }}
             >
               No puns found!
             </h3>
+
             <p className="text-gray-500 mt-2">
               That&apos;s un-pun-acceptable! Try another category.
             </p>

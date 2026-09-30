@@ -24,7 +24,12 @@ export async function GET(request: NextRequest) {
     })
     .from(cartItems)
     .innerJoin(products, eq(cartItems.productId, products.id))
-    .where(eq(cartItems.sessionId, sessionId));
+    .where(
+      and(
+        eq(cartItems.sessionId, sessionId),
+        eq(products.published, true)
+      )
+    );
 
   return NextResponse.json({ items });
 }
@@ -35,21 +40,29 @@ export async function POST(request: NextRequest) {
   const { sessionId, productId } = body;
 
   if (!sessionId || !productId) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing fields" },
+      { status: 400 }
+    );
   }
 
   const [product] = await db
-  .select({ id: products.id })
-  .from(products)
-  .where(eq(products.id, Number(productId)))
-  .limit(1);
+    .select({ id: products.id })
+    .from(products)
+    .where(
+      and(
+        eq(products.id, Number(productId)),
+        eq(products.published, true)
+      )
+    )
+    .limit(1);
 
-if (!product) {
-  return NextResponse.json(
-    { error: "Product not found." },
-    { status: 404 }
-  );
-}
+  if (!product) {
+    return NextResponse.json(
+      { error: "Product not found." },
+      { status: 404 }
+    );
+  }
 
   // Check if item already in cart
   const existing = await db
@@ -93,11 +106,11 @@ export async function PATCH(request: NextRequest) {
     .update(cartItems)
     .set({ quantity })
     .where(
-  and(
-    eq(cartItems.id, itemId),
-    eq(cartItems.sessionId, sessionId)
-  )
-);
+      and(
+        eq(cartItems.id, itemId),
+        eq(cartItems.sessionId, sessionId)
+      )
+    );
 
   return NextResponse.json({ success: true });
 }
@@ -108,15 +121,18 @@ export async function DELETE(request: NextRequest) {
   const { itemId, sessionId } = body;
 
   if (!itemId || !sessionId) {
-    return NextResponse.json({ error: "Missing itemId" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing itemId" },
+      { status: 400 }
+    );
   }
 
   await db.delete(cartItems).where(
-  and(
-    eq(cartItems.id, itemId),
-    eq(cartItems.sessionId, sessionId)
-  )
-);
+    and(
+      eq(cartItems.id, itemId),
+      eq(cartItems.sessionId, sessionId)
+    )
+  );
 
   return NextResponse.json({ success: true });
 }

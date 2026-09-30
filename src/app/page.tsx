@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { products, categories } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import Link from "next/link";
 import { ProductCard } from "@/components/ProductCard";
 
@@ -22,8 +22,14 @@ async function getFeaturedProducts() {
     })
     .from(products)
     .innerJoin(categories, eq(products.categoryId, categories.id))
-    .where(eq(products.featured, true))
+    .where(
+      and(
+        eq(products.featured, true),
+        eq(products.published, true)
+      )
+    )
     .limit(8);
+
   return results;
 }
 
@@ -47,8 +53,14 @@ async function getBestSellers() {
     })
     .from(products)
     .innerJoin(categories, eq(products.categoryId, categories.id))
-    .where(eq(products.bestSeller, true))
+    .where(
+      and(
+        eq(products.bestSeller, true),
+        eq(products.published, true)
+      )
+    )
     .limit(4);
+
   return results;
 }
 
@@ -97,16 +109,21 @@ export default async function HomePage() {
             <span className="inline-block text-6xl md:text-8xl mb-4 animate-wiggle">
               🤣
             </span>
+
             <h1
               className="text-5xl md:text-7xl font-bold mb-4 drop-shadow-lg"
               style={{ fontFamily: "var(--font-display)" }}
             >
               Welcome to{" "}
-              <span className="rainbow-text drop-shadow-lg">The Pun House!</span>
+              <span className="rainbow-text drop-shadow-lg">
+                The Pun House!
+              </span>
             </h1>
+
             <p className="text-xl md:text-2xl font-semibold mb-2 text-white/90 max-w-2xl mx-auto">
               Puns So Good, They Hurt 💫
             </p>
+
             <p className="text-lg md:text-xl text-white/80 max-w-xl mx-auto mb-8">
               Greeting cards, t-shirts, posters, mugs & more — all
               hilariously punny and guaranteed to make you smile!
@@ -120,6 +137,7 @@ export default async function HomePage() {
               >
                 🛍️ Shop All Puns
               </Link>
+
               <Link
                 href="/shop?category=greeting-cards"
                 className="btn-fun bg-white/20 backdrop-blur-sm text-white border-2 border-white/50 font-bold text-lg px-8 py-4 rounded-full shadow-xl hover:bg-white/30 inline-flex items-center gap-2"
@@ -164,7 +182,7 @@ export default async function HomePage() {
             {[
               { emoji: "🚚", text: "Free Shipping $35+" },
               { emoji: "😂", text: "100% Pun Guaranteed" },
-              { emoji: "🔄", text: "30-Day Returns" },
+              { emoji: "📦", text: "Made to Order" },
               { emoji: "💚", text: "Eco-Friendly Materials" },
             ].map((badge, i) => (
               <div key={i} className="flex items-center justify-center gap-2">
@@ -187,6 +205,7 @@ export default async function HomePage() {
           >
             Shop by <span className="text-bubblegum">Category</span> ✨
           </h2>
+
           <p className="text-gray-500 mt-2 text-lg">
             Find the perfect pun for every occasion!
           </p>
@@ -202,13 +221,17 @@ export default async function HomePage() {
               <span className="text-5xl block mb-3 group-hover:scale-125 transition-transform">
                 {cat.emoji}
               </span>
+
               <h3
                 className="font-bold text-lg text-retro-dark"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 {cat.name}
               </h3>
-              <p className="text-sm text-gray-400 mt-1">{cat.description}</p>
+
+              <p className="text-sm text-gray-400 mt-1">
+                {cat.description}
+              </p>
             </Link>
           ))}
         </div>
@@ -224,6 +247,7 @@ export default async function HomePage() {
             >
               ⭐ Featured <span className="text-grape">Puns</span>
             </h2>
+
             <p className="text-gray-500 mt-2 text-lg">
               Our most pun-derful picks, handpicked for you!
             </p>
@@ -268,6 +292,7 @@ export default async function HomePage() {
           >
             🔥 Best <span className="text-coral">Sellers</span>
           </h2>
+
           <p className="text-gray-500 mt-2 text-lg">
             The puns everyone can&apos;t stop buying!
           </p>
@@ -295,14 +320,19 @@ export default async function HomePage() {
       {/* Fun CTA Banner */}
       <section className="bg-gradient-to-r from-sunshine via-coral to-bubblegum py-16 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-5 left-10 text-8xl rotate-12">🎈</div>
+          <div className="absolute top-5 left-10 text-8xl rotate-12">
+            🎈
+          </div>
+
           <div className="absolute bottom-5 right-10 text-8xl -rotate-12">
             🎉
           </div>
+
           <div className="absolute top-10 right-1/3 text-6xl rotate-45">
             ⭐
           </div>
         </div>
+
         <div className="relative max-w-4xl mx-auto px-4 text-center text-white">
           <h2
             className="text-3xl md:text-5xl font-bold mb-4"
@@ -310,10 +340,12 @@ export default async function HomePage() {
           >
             Warning: Puns May Cause Excessive Groaning 😆
           </h2>
+
           <p className="text-lg md:text-xl mb-8 text-white/90">
             Side effects include uncontrollable laughter, eye-rolling, and the
             urge to share with friends. Shop responsibly!
           </p>
+
           <Link
             href="/shop"
             className="btn-fun inline-flex items-center gap-2 bg-white text-retro-dark font-bold text-xl px-10 py-5 rounded-full shadow-2xl"
@@ -362,14 +394,19 @@ export default async function HomePage() {
             >
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-3xl">{review.avatar}</span>
+
                 <div>
                   <p className="font-bold text-retro-dark">{review.name}</p>
+
                   <div className="text-sunshine">
                     {"⭐".repeat(review.rating)}
                   </div>
                 </div>
               </div>
-              <p className="text-gray-600 italic">&ldquo;{review.text}&rdquo;</p>
+
+              <p className="text-gray-600 italic">
+                &ldquo;{review.text}&rdquo;
+              </p>
             </div>
           ))}
         </div>

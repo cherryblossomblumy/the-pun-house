@@ -35,6 +35,9 @@ categoryId: integer("category_id")
   featured: boolean("featured").default(false).notNull(),
   bestSeller: boolean("best_seller").default(false).notNull(),
   stockCount: integer("stock_count").default(100).notNull(),
+
+  published: boolean("published").default(true).notNull(),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

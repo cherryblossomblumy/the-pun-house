@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { products, categories } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/AddToCartButton";
@@ -24,7 +24,12 @@ export async function generateMetadata({
       image: products.image,
     })
     .from(products)
-    .where(eq(products.slug, slug))
+    .where(
+      and(
+        eq(products.slug, slug),
+        eq(products.published, true)
+      )
+    )
     .limit(1);
 
   if (results.length === 0) {
@@ -82,7 +87,12 @@ export default async function ProductPage({
     })
     .from(products)
     .innerJoin(categories, eq(products.categoryId, categories.id))
-    .where(eq(products.slug, slug))
+    .where(
+      and(
+        eq(products.slug, slug),
+        eq(products.published, true)
+      )
+    )
     .limit(1);
 
   if (results.length === 0) {
@@ -148,7 +158,12 @@ export default async function ProductPage({
     })
     .from(products)
     .innerJoin(categories, eq(products.categoryId, categories.id))
-    .where(eq(categories.slug, product.categorySlug))
+    .where(
+      and(
+        eq(categories.slug, product.categorySlug),
+        eq(products.published, true)
+      )
+    )
     .limit(4);
 
   const relatedProducts = related.filter(
